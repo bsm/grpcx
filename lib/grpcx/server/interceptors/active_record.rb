@@ -6,19 +6,19 @@ module Grpcx
       # and re-pooling connections when request is processed.
       class ActiveRecord < GRPC::ServerInterceptor
 
-        def bidi_streamer(_requests: nil, _call: nil, _method: nil, &block)
+        def request_response(*, &block)
           wrap(&block)
         end
 
-        def client_streamer(_call: nil, _method: nil, &block)
+        def client_streamer(*, &block)
           wrap(&block)
         end
 
-        def request_response(_request: nil, _call: nil, _method: nil, &block)
+        def server_streamer(*, &block)
           wrap(&block)
         end
 
-        def server_streamer(_request: nil, _call: nil, _method: nil, &block)
+        def bidi_streamer(*, &block)
           wrap(&block)
         end
 

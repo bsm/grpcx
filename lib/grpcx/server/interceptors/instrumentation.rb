@@ -6,28 +6,25 @@ module Grpcx
       class Instrumentation < GRPC::ServerInterceptor
         METRIC_NAME = 'process_action.grpc'.freeze
 
-        def bidi_streamer(_requests: nil, _call: nil, meth: nil, &block)
-          # TODO: at some point would be nice to wrap streamers and report stats like messages received/sent
-          wrap(action: meth, &block)
+        def request_response(method: nil, &block)
+          instrument(action: method, &block)
         end
 
-        def client_streamer(_call: nil, meth: nil, &block)
-          # TODO: at some point would be nice to wrap streamers and report stats like messages received
-          wrap(action: meth, &block)
+        def client_streamer(method: nil, &block)
+          instrument(action: method, &block)
         end
 
-        def request_response(_request: nil, _call: nil, meth: nil, &block)
-          wrap(action: meth, &block)
+        def server_streamer(method: nil, &block)
+          instrument(action: method, &block)
         end
 
-        def server_streamer(_request: nil, _call: nil, meth: nil, &block)
-          # TODO: at some point would be nice to wrap streamers and report stats like messages sent
-          wrap(action: meth, &block)
+        def bidi_streamer(method: nil, &block)
+          instrument(action: method, &block)
         end
 
         private
 
-        def wrap(opts={}, &block)
+        def instrument(opts={}, &block)
           ActiveSupport::Notifications.instrument(METRIC_NAME, opts, &block)
         end
 

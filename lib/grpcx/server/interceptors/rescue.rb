@@ -2,11 +2,12 @@ module Grpcx
   module Server
     module Interceptors
       class Rescue < GRPC::ServerInterceptor
-        def initialize(rescuable)
+        def initialize(rescuable, opts={})
           @rescuable = rescuable
+          super(opts)
         end
 
-        def bidi_streamer(*)
+        def request_response(*)
           yield
         rescue => exception
           @rescuable.rescue_with_handler(exception) || raise
@@ -18,13 +19,13 @@ module Grpcx
           @rescuable.rescue_with_handler(exception) || raise
         end
 
-        def request_response(*)
+        def server_streamer(*)
           yield
         rescue => exception
           @rescuable.rescue_with_handler(exception) || raise
         end
 
-        def server_streamer(*)
+        def bidi_streamer(*)
           yield
         rescue => exception
           @rescuable.rescue_with_handler(exception) || raise
