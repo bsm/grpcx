@@ -17,7 +17,7 @@ Example:
 ```ruby
 require 'grpcx/server' # or just 'grpcx'
 
-class MyServer << GRPC::RpcServer
+class MyServer < GRPC::RpcServer
   include Grpcx::Server
 end
 
@@ -34,7 +34,7 @@ Recommended to be used with [Grpclb::Server](https://github.com/bsm/grpclb/tree/
 require 'grpclb/server'
 require 'grpcx/server'
 
-class MyServer << Grpclb::Server
+class MyServer < Grpclb::Server
   include Grpcx::Server
 end
 

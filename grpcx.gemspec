@@ -13,9 +13,12 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.required_ruby_version = '>= 2.2'
 
-  s.add_dependency 'grpc' # TODO: investigate which version is compatible (like when interceptors were introduced)
+  s.add_dependency 'activesupport', '>= 5.0'
+  s.add_dependency 'grpc', '>= 1.8.0'
 
+  s.add_development_dependency 'activerecord'
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
   s.add_development_dependency 'rubocop'
 end

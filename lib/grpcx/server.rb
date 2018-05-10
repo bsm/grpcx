@@ -1,54 +1,49 @@
+require 'grpc'
 require 'grpc/health/checker'
-
-require 'grpcx/server/interceptor/active_record/errors'
-require 'grpcx/server/interceptor/active_record/connection'
-require 'grpcx/server/interceptor/active_support/notifications/instrument'
+require 'active_support/concern'
+require 'active_support/rescuable'
+require 'grpcx/server/interceptors'
 
 module Grpcx
   module Server
-    module Methods
-      def initialize(opts={})
-        @checker = ::Grpc::Health::Checker.new
-        super(apply_default_options(opts))
-        handle(@checker)
+    extend ActiveSupport::Concern
+    include ActiveSupport::Rescuable
+
+    ServingStatus = ::Grpc::Health::Checker::HealthCheckResponse::ServingStatus
+
+    included do
+      attr_reader :interceptors
+
+      rescue_from 'ActiveRecord::RecordInvalid' do |e|
+        raise GRPC::InvalidArgument.new('record invalid', errors: e.record.errors.to_h)
       end
-
-      def handle(service)
-        service = service.new if service.is_a?(Class)
-
-        # service is Ok to be marked as running, as handle is called before server actually starts handling requests:
-        @checker.add_status(service.service_name, ::Grpc::Health::Checker::HealthCheckResponse::ServingStatus::SERVING)
-
-        super(service)
-      end
-
-      private
-
-      def apply_default_options(opts={})
-        opts.tap do
-          opts[:pool_size] ||= ENV['GRPC_SERVER_THREADS'].to_i if ENV['GRPC_SERVER_THREADS']
-          opts[:max_waiting_requests] ||= ENV['GRPC_SERVER_QUEUE'].to_i if ENV['GRPC_SERVER_QUEUE']
-
-          # interceptors are fired in FIFO order,
-          # so more generic handlers come last:
-          (opts[:interceptors] ||= []).concat(default_interceptors)
-        end
-      end
-
-      def default_interceptors
-        # this could be a const array, as we don't rely on any options to init interceptors (yet),
-        # but it's fine to leave as-is for now:
-        [
-          Grpcx::Server::Interceptor::ActiveRecord::Errors.new,
-          Grpcx::Server::Interceptor::ActiveRecord::Connection.new,
-          Grpcx::Server::Interceptor::ActiveSupport::Notifications::Instrument.new,
-        ]
+      rescue_from 'ActiveRecord::RecordNotFound' do |e|
+        raise GRPC::NotFound.new('record not found', id: e.id, model: e.model.to_s)
       end
     end
-    private_constant :Methods
 
-    def self.append_features(mod)
-      mod.prepend(Methods)
+    def initialize(opts={})
+      opts[:pool_size] ||= ENV['GRPC_SERVER_THREADS'].to_i if ENV['GRPC_SERVER_THREADS']
+      opts[:max_waiting_requests] ||= ENV['GRPC_SERVER_QUEUE'].to_i if ENV['GRPC_SERVER_QUEUE']
+
+      # interceptors are fired in FIFO order.
+      opts[:interceptors] ||= []
+      opts[:interceptors].prepend Grpcx::Server::Interceptors::Rescue.new(self)
+      opts[:interceptors].prepend Grpcx::Server::Interceptors::Instrumentation.new
+      opts[:interceptors].prepend Grpcx::Server::Interceptors::ActiveRecord.new if defined?(::ActiveRecord)
+
+      super(opts).tap do
+        handle(health)
+      end
+    end
+
+    def handle(service)
+      health.add_status(service.service_name, ServingStatus::SERVING) if service.respond_to?(:service_name)
+      super
+    end
+
+    def health
+      @health ||= ::Grpc::Health::Checker.new
     end
   end
 end

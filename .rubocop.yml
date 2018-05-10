@@ -3,3 +3,10 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 2.2
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/RescueStandardError:
+  Enabled: false
+
