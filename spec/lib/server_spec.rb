@@ -10,7 +10,10 @@ RSpec.describe Grpcx::Server do
 
   it 'should have a health-check' do
     expect(subject.health).to be_a(Grpc::Health::Checker)
-    expect(subject.health.instance_variable_get(:@statuses)).to eq('grpcx.spec.service.V1' => 1)
+    expect(subject.health.instance_variable_get(:@statuses)).to eq(
+      'grpcx.spec.service.V1' => 1,
+      'grpc.health.v1.Health' => 1,
+    )
   end
 
   it 'should have interceptors' do

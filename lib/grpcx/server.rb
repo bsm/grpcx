@@ -38,7 +38,14 @@ module Grpcx
     end
 
     def handle(service)
-      health.add_status(service.service_name, ServingStatus::SERVING) if service.respond_to?(:service_name)
+      service_name = nil
+      if service.is_a?(Class) && service < GRPC::GenericService
+        service_name = service.service_name
+      elsif service.is_a?(GRPC::GenericService)
+        service_name = service.class.service_name
+      end
+
+      health.add_status(service_name, ServingStatus::SERVING) if service_name
       super
     end
 
