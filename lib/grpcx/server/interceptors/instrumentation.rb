@@ -6,20 +6,20 @@ module Grpcx
       class Instrumentation < GRPC::ServerInterceptor
         METRIC_NAME = 'process_action.grpc'.freeze
 
-        def request_response(method: nil, &block)
-          instrument(action: method, &block)
+        def request_response(opts={}, &block)
+          instrument(action: opts[:method], &block)
         end
 
-        def client_streamer(method: nil, &block)
-          instrument(action: method, &block)
+        def client_streamer(opts={}, &block)
+          instrument(action: opts[:method], &block)
         end
 
-        def server_streamer(method: nil, &block)
-          instrument(action: method, &block)
+        def server_streamer(opts={}, &block)
+          instrument(action: opts[:method], &block)
         end
 
-        def bidi_streamer(method: nil, &block)
-          instrument(action: method, &block)
+        def bidi_streamer(opts={}, &block)
+          instrument(action: opts[:method], &block)
         end
 
         private
