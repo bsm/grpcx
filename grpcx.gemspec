@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'grpcx'
-  s.version       = '0.0.1'
+  s.version       = '0.0.2'
   s.authors       = ['Black Square Media Ltd']
   s.email         = ['info@blacksquaremedia.com']
   s.summary       = %(gRPC extensions/helpers)
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.required_ruby_version = '>= 2.2'
 
-  s.add_dependency 'grpc'
+  s.add_dependency 'grpc' # TODO: investigate which version is compatible (like when interceptors were introduced)
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
