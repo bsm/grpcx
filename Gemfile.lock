@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    grpcx (0.1.0)
+    grpcx (0.1.1)
       activesupport (>= 5.0)
       grpc (>= 1.8.0)
 
