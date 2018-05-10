@@ -7,6 +7,3 @@ AllCops:
 Metrics/AbcSize:
   Enabled: false
 
-Style/RescueStandardError:
-  Enabled: false
-

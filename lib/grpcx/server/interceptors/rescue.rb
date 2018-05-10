@@ -9,26 +9,26 @@ module Grpcx
 
         def request_response(*)
           yield
-        rescue => exception
-          @rescuable.rescue_with_handler(exception) || raise
+        rescue StandardError => err
+          @rescuable.rescue_with_handler(err) || raise
         end
 
         def client_streamer(*)
           yield
-        rescue => exception
-          @rescuable.rescue_with_handler(exception) || raise
+        rescue StandardError => err
+          @rescuable.rescue_with_handler(err) || raise
         end
 
         def server_streamer(*)
           yield
-        rescue => exception
-          @rescuable.rescue_with_handler(exception) || raise
+        rescue StandardError => err
+          @rescuable.rescue_with_handler(err) || raise
         end
 
         def bidi_streamer(*)
           yield
-        rescue => exception
-          @rescuable.rescue_with_handler(exception) || raise
+        rescue StandardError => err
+          @rescuable.rescue_with_handler(err) || raise
         end
 
       end
