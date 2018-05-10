@@ -20,4 +20,13 @@ RSpec.describe Grpcx::Server do
     expect(registered.size).to eq(3)
   end
 
+  it 'should have rescue handlers' do
+    expect(subject.rescue_handlers.size).to eq(3)
+    expect(subject.rescue_handlers.map(&:first)).to match_array %w[
+      ActiveRecord::RecordInvalid
+      ActiveRecord::RecordNotFound
+      ArgumentError
+    ]
+  end
+
 end
