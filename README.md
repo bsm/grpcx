@@ -8,9 +8,10 @@ Ruby gRPC extensions/helpers
 Mixin for `GRPC::RpcServer`:
 
 - handles [GRPC health checks](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) requests
-- transforms most common `ActiveRecord::ActiveRecordError`-s into `GRPC::BadStatus` ones
 - handles `ActiveRecord` connection (auto-connect + pooling)
 - instruments each request with `ActiveSupport::Notifications` (available as `process_action.grpc`, includes `action: METHOD_NAME` data)
+- includes `ActiveSupport::Rescuable` and transforms most common `ActiveRecord::ActiveRecordError`-s into `GRPC::BadStatus` ones
+
 
 Example:
 
@@ -19,6 +20,11 @@ require 'grpcx/server' # or just 'grpcx'
 
 class MyServer < GRPC::RpcServer
   include Grpcx::Server
+
+  # optional custom error handling:
+  rescue_from 'MyError' do |e|
+    raise Grpc::BadStatus.new(e.to_s, my_extra: e.my_extra)
+  end
 end
 
 # proceed as with usual GRPC::RpcServer:
