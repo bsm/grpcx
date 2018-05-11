@@ -1,5 +1,7 @@
+require 'grpclb/server'
+
 module Grpcx
-  module Server
+  class Server < Grpclb::Server
     module Interceptors
       # Manages ActiveRecord::Base connection,
       # making sure that connection is established before each request

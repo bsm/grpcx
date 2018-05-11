@@ -43,9 +43,7 @@ module Grpcx::Spec
     Stub = V1.rpc_stub_class
   end
 
-  class Server < GRPC::RpcServer
-    include Grpcx::Server
-
+  class Server < Grpcx::Server
     rescue_from 'ArgumentError' do |e|
       raise GRPC::InvalidArgument.new(errors: e.to_s)
     end

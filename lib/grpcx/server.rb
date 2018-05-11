@@ -1,32 +1,27 @@
 require 'grpc'
 require 'grpc/health/checker'
-require 'active_support/concern'
+require 'grpclb/server'
 require 'active_support/rescuable'
 require 'grpcx/server/interceptors'
 
 module Grpcx
-  module Server
-    extend ActiveSupport::Concern
+  class Server < Grpclb::Server
     include ActiveSupport::Rescuable
 
     ServingStatus = ::Grpc::Health::Checker::HealthCheckResponse::ServingStatus
 
-    included do
-      attr_reader :interceptors
-
-      rescue_from 'ActiveRecord::RecordInvalid' do |e|
-        raise GRPC::InvalidArgument.new('record invalid', errors: e.record.errors.to_h)
-      end
-      rescue_from 'ActiveRecord::RecordNotFound' do |e|
-        raise GRPC::NotFound.new('record not found', id: e.id, model: e.model.to_s)
-      end
+    rescue_from 'ActiveRecord::RecordInvalid' do |e|
+      raise GRPC::InvalidArgument.new('record invalid', errors: e.record.errors.to_h)
+    end
+    rescue_from 'ActiveRecord::RecordNotFound' do |e|
+      raise GRPC::NotFound.new('record not found', id: e.id, model: e.model.to_s)
     end
 
     def initialize(opts={})
       opts[:pool_size] ||= ENV['GRPC_SERVER_THREADS'].to_i if ENV['GRPC_SERVER_THREADS']
       opts[:max_waiting_requests] ||= ENV['GRPC_SERVER_QUEUE'].to_i if ENV['GRPC_SERVER_QUEUE']
 
-      # interceptors are fired in FIFO order.
+      # interceptors are fired in FIFO order
       opts[:interceptors] ||= []
       opts[:interceptors].prepend Grpcx::Server::Interceptors::Rescue.new(self)
       opts[:interceptors].prepend Grpcx::Server::Interceptors::Instrumentation.new
@@ -48,6 +43,8 @@ module Grpcx
       health.add_status(service_name, ServingStatus::SERVING) if service_name
       super
     end
+
+    private
 
     def health
       @health ||= ::Grpc::Health::Checker.new

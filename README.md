@@ -5,46 +5,41 @@ Ruby gRPC extensions/helpers
 
 # Grpcx::Server
 
-Mixin for `GRPC::RpcServer`:
+Drop-in replacement for `GRPC::RpcServer`, that:
 
-- handles [GRPC health checks](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) requests
+- handles [grpclb](https://github.com/bsm/grpclb/tree/master/ruby) load requests
+- handles [GRPC health checking](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) requests
 - handles `ActiveRecord` connection (auto-connect + pooling)
 - instruments each request with `ActiveSupport::Notifications` (available as `process_action.grpc`, includes `action: METHOD_NAME` data)
 - includes `ActiveSupport::Rescuable` and transforms most common `ActiveRecord::ActiveRecordError`-s into `GRPC::BadStatus` ones
 
-
-Example:
+Basic usage:
 
 ```ruby
 require 'grpcx/server' # or just 'grpcx'
 
-class MyServer < GRPC::RpcServer
-  include Grpcx::Server
-
-  # optional custom error handling:
-  rescue_from 'MyError' do |e|
-    raise Grpc::BadStatus.new(e.to_s, my_extra: e.my_extra)
-  end
-end
+opts = {
+  pool_size:            ENV['GRPC_SERVER_THREADS'].to_i, # default, unless provided in opts hash and ENV var is set
+  max_waiting_requests: ENV['GRPC_SERVER_QUEUE'].to_i,   # default, unless provided in opts hash and ENV var is set
+  # and any other options, accepted by GRPC::RpcServer's constructor
+}
 
 # proceed as with usual GRPC::RpcServer:
-server = MyServer.new(...)
+server = Grpcx::Server.new(opts)
 server.handle(MyService.new)
 server.add_http2_port '127.0.0.1:8080', :this_port_is_insecure
 server.run_till_terminated
 ```
 
-Recommended to be used with [Grpclb::Server](https://github.com/bsm/grpclb/tree/master/ruby):
+Also, can be extended:
 
 ```ruby
-require 'grpclb/server'
-require 'grpcx/server'
-
-class MyServer < Grpclb::Server
-  include Grpcx::Server
+class MyServer < Grpcx::Server
+  # optional custom error handling:
+  rescue_from 'MyError' do |e|
+    raise Grpc::BadStatus.new(e.to_s, my_extra: e.my_extra)
+  end
 end
-
-...
 ```
 
 
