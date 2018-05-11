@@ -6,8 +6,15 @@ require 'google/protobuf'
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_message "grpcx.spec.Message" do
     optional :name, :string, 1
+    optional :version, :enum, 2, "grpcx.spec.Version"
+    optional :types, :message, 3, "grpcx.spec.Types"
   end
-  add_enum "grpcx.spec.Enum" do
+  add_message "grpcx.spec.Types" do
+    optional :num, :int64, 1
+    repeated :truth, :bool, 2
+    optional :decimal, :double, 3
+  end
+  add_enum "grpcx.spec.Version" do
     value :V0, 0
     value :V1, 1
     value :V2, 2
@@ -18,7 +25,8 @@ end
 
 module Grpcx::Spec
   Message = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Message").msgclass
-  Enum = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Enum").enummodule
+  Version = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Version").enummodule
+  Types = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Types").msgclass
   GetMessageRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.GetMessageRequest").msgclass
 
   module Service
