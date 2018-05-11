@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 5.0'
   s.add_dependency 'grpc', '>= 1.8.0'
+  s.add_dependency 'grpclb', '~> 0.4.4'
 
   s.add_development_dependency 'activerecord'
   s.add_development_dependency 'bundler'

@@ -1,7 +1,11 @@
+require 'grpclb/server'
+
 module Grpcx
-  module Server
+  class Server < Grpclb::Server
     module Interceptors
+      # Delegates exception handling to provided rescuable.
       class Rescue < GRPC::ServerInterceptor
+
         def initialize(rescuable, opts={})
           @rescuable = rescuable
           super(opts)

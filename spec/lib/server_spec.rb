@@ -9,17 +9,18 @@ RSpec.describe Grpcx::Server do
   end
 
   it 'should have a health-check' do
-    expect(subject.health).to be_a(Grpc::Health::Checker)
-    expect(subject.health.instance_variable_get(:@statuses)).to eq(
-      'grpcx.spec.service.V1' => 1,
-      'grpc.health.v1.Health' => 1,
+    expect(subject.send(:health)).to be_a(Grpc::Health::Checker)
+    expect(subject.send(:health).instance_variable_get(:@statuses)).to eq(
+      'grpcx.spec.service.V1'        => 1,
+      'grpclb.backend.v1.LoadReport' => 1,
+      'grpc.health.v1.Health'        => 1,
     )
   end
 
   it 'should have interceptors' do
-    expect(subject.interceptors).to be_a(GRPC::InterceptorRegistry)
+    expect(subject.instance_variable_get(:@interceptors)).to be_a(GRPC::InterceptorRegistry)
 
-    registered = subject.interceptors.instance_variable_get(:@interceptors)
+    registered = subject.instance_variable_get(:@interceptors).instance_variable_get(:@interceptors)
     expect(registered.size).to eq(3)
   end
 
