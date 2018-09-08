@@ -4,16 +4,16 @@ require 'set'
 module Grpcx
   # Entity releated helpers
   module Entity
-    extend self
+    module_function
 
     TRUE_VALUES = [true, 1, "1", "t", "T", "true", "TRUE", "on", "ON"].to_set.freeze
 
     # @param [Class] msgclass messagepack message class
     # @param [Hash] attrs attributes to assign
-    def build(msgclass, attrs={})
+    def build(msgclass, attrs={}) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       attrs  = ActiveSupport::HashWithIndifferentAccess.new(attrs)
       fields = {}
-      msgclass.descriptor.each do |field|
+      msgclass.descriptor.each do |field| # rubocop:disable Metrics/BlockLength
         next unless attrs.key?(field.name)
 
         source = attrs[field.name]
@@ -52,9 +52,8 @@ module Grpcx
     end
 
     def convert(field, value, &block)
-      field.label == :repeated ? value.map(&block) : block.call(value) if value
+      field.label == :repeated ? value.map(&block) : yield(value) if value # rubocop:disable Style/IfUnlessModifierOfIfUnless
     end
     private :convert
-
   end
 end
