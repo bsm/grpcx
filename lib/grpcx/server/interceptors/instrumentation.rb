@@ -7,25 +7,27 @@ module Grpcx
         METRIC_NAME = 'process_action.grpc'.freeze
 
         def request_response(opts={}, &block)
-          instrument(action: opts[:method], &block)
+          instrument(opts[:method], &block)
         end
 
         def client_streamer(opts={}, &block)
-          instrument(action: opts[:method], &block)
+          instrument(opts[:method], &block)
         end
 
         def server_streamer(opts={}, &block)
-          instrument(action: opts[:method], &block)
+          instrument(opts[:method], &block)
         end
 
         def bidi_streamer(opts={}, &block)
-          instrument(action: opts[:method], &block)
+          instrument(opts[:method], &block)
         end
 
         private
 
-        def instrument(opts={}, &block)
-          ActiveSupport::Notifications.instrument(METRIC_NAME, opts, &block)
+        def instrument(method, &block)
+          service = method.owner.service_name # method is just a standard ruby Method class, so `owner` is a service impl
+          action = method.name # does not match real proto service name; it's a GRPC::GenericService.underscore-d version
+          ActiveSupport::Notifications.instrument(METRIC_NAME, service: service, action: action, &block)
         end
 
       end

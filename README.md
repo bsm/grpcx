@@ -9,7 +9,7 @@ Mixin for `GRPC::RpcServer`:
 
 - handles [GRPC health checks](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) requests
 - handles `ActiveRecord` connection (auto-connect + pooling)
-- instruments each request with `ActiveSupport::Notifications` (available as `process_action.grpc`, includes `action: METHOD_NAME` data)
+- instruments each request with `ActiveSupport::Notifications` (available as `process_action.grpc`, includes `service: 'package.name.ServiceName', action: 'underscored_action_name'` data)
 - includes `ActiveSupport::Rescuable` and transforms most common `ActiveRecord::ActiveRecordError`-s into `GRPC::BadStatus` ones
 
 
@@ -51,12 +51,13 @@ end
 ## Using with [Datadog::Notifications](https://github.com/bsm/datadog-notifications)
 
 ```ruby
+# TODO: update this in datadog-notifications gem itself (to handle new service/action payloads)
 module Datadog::Notifications::Plugins
-  class GRPC < Base
+  class MyGRPC < Base
 
     def initialize(opts={})
       super
-      Datadog::Notifications.subscribe 'process_action.grpc' do |reporter, event|
+      Datadog::Notifications.subscribe(Grpcx::Server::Interceptors::Instrumentation::METRIC_NAME) do |reporter, event|
         record(reporter, event)
       end
     end
@@ -64,9 +65,10 @@ module Datadog::Notifications::Plugins
     private
 
     def record(reporter, event)
-      action = event.payload[:action]
-      status = event.payload[:exception] ? 'error' : 'ok'
-      tags = self.tags + ["rpc:#{action}", "status:#{status}"]
+      service = event.payload[:service]
+      action  = event.payload[:action]
+      status  = event.payload[:exception] ? 'error' : 'ok'
+      tags = self.tags + %W[service:#{service} action:#{action} status:#{status}]
 
       reporter.batch do
         reporter.increment 'grpc.request', tags: tags
@@ -78,7 +80,7 @@ module Datadog::Notifications::Plugins
 end
 
 Datadog::Notifications.configure do |c|
-  c.use Datadog::Notifications::Plugins::GRPC
+  c.use Datadog::Notifications::Plugins::MyGRPC
 end if RUNNING_IN_PROD?
 ```
 
@@ -86,11 +88,14 @@ end if RUNNING_IN_PROD?
 ## Using with [Sentry](https://sentry.io/)/[Raven](https://github.com/getsentry/raven-ruby)
 
 ```ruby
-ActiveSupport::Notifications.subscribe('process_action.grpc') do |_name, _start, _finish, _id, payload|
+ActiveSupport::Notifications.subscribe(Grpcx::Server::Interceptors::Instrumentation::METRIC_NAME) do |_name, _start, _finish, _id, payload|
   e = payload[:exception_object]
   next unless e
 
-  Raven.capture_exception(e)
+  Raven.capture_exception(e, extra: {
+    'service' => payload[:service],
+    'action'  => payload[:action],
+  })
 end
 
 Raven.configure do |config|
