@@ -4,6 +4,10 @@ require 'set'
 module Grpcx
   # Entity releated helpers
   module Entity
+    def self._convert(field, value, &block)
+      field.label == :repeated ? value.map(&block) : yield(value) if value # rubocop:disable Style/IfUnlessModifierOfIfUnless
+    end
+
     module_function
 
     TRUE_VALUES = [true, 1, "1", "t", "T", "true", "TRUE", "on", "ON"].to_set.freeze
@@ -21,17 +25,17 @@ module Grpcx
 
         case field.type
         when :int64, :int32
-          target = convert(field, source, &:to_i)
+          target = Entity._convert(field, source, &:to_i)
         when :float, :double
-          target = convert(field, source, &:to_f)
+          target = Entity._convert(field, source, &:to_f)
         when :string
-          target = convert(field, source, &:to_s)
+          target = Entity._convert(field, source, &:to_s)
         when :bool
-          target = convert(field, source) do |vv|
+          target = Entity._convert(field, source) do |vv|
             TRUE_VALUES.include?(vv)
           end
         when :enum
-          target = convert(field, source) do |vv|
+          target = Entity._convert(field, source) do |vv|
             case vv
             when Integer
               vv
@@ -40,7 +44,7 @@ module Grpcx
             end
           end
         when :message
-          target = convert(field, source) do |vv|
+          target = Entity._convert(field, source) do |vv|
             build(field.subtype.msgclass, vv)
           end
         end
@@ -50,10 +54,5 @@ module Grpcx
 
       msgclass.new(fields)
     end
-
-    def convert(field, value, &block)
-      field.label == :repeated ? value.map(&block) : yield(value) if value # rubocop:disable Style/IfUnlessModifierOfIfUnless
-    end
-    private :convert
   end
 end
