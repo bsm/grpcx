@@ -50,37 +50,11 @@ end
 
 ## Using with [Datadog::Notifications](https://github.com/bsm/datadog-notifications)
 
+Since version >= [0.5.4](https://github.com/bsm/datadog-notifications/releases/tag/v0.5.4)
+
 ```ruby
-# TODO: update this in datadog-notifications gem itself (to handle new service/action payloads)
-module Datadog::Notifications::Plugins
-  class MyGRPC < Base
-
-    def initialize(opts={})
-      super
-      Datadog::Notifications.subscribe(Grpcx::Server::Interceptors::Instrumentation::METRIC_NAME) do |reporter, event|
-        record(reporter, event)
-      end
-    end
-
-    private
-
-    def record(reporter, event)
-      service = event.payload[:service]
-      action  = event.payload[:action]
-      status  = event.payload[:exception] ? 'error' : 'ok'
-      tags = self.tags + %W[service:#{service} action:#{action} status:#{status}]
-
-      reporter.batch do
-        reporter.increment 'grpc.request', tags: tags
-        reporter.timing 'grpc.request.time', event.duration, tags: tags
-      end
-    end
-
-  end
-end
-
 Datadog::Notifications.configure do |c|
-  c.use Datadog::Notifications::Plugins::MyGRPC
+  c.use Datadog::Notifications::Plugins::GRPC
 end if RUNNING_IN_PROD?
 ```
 
