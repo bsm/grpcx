@@ -6,19 +6,19 @@ module Grpcx
       class Instrumentation < GRPC::ServerInterceptor
         METRIC_NAME = 'process_action.grpc'.freeze
 
-        def request_response(opts={}, &block)
+        def request_response(opts = {}, &block)
           instrument(opts[:method], &block)
         end
 
-        def client_streamer(opts={}, &block)
+        def client_streamer(opts = {}, &block)
           instrument(opts[:method], &block)
         end
 
-        def server_streamer(opts={}, &block)
+        def server_streamer(opts = {}, &block)
           instrument(opts[:method], &block)
         end
 
-        def bidi_streamer(opts={}, &block)
+        def bidi_streamer(opts = {}, &block)
           instrument(opts[:method], &block)
         end
 
@@ -29,7 +29,6 @@ module Grpcx
           action = method.name # does not match real proto service name; it's a GRPC::GenericService.underscore-d version
           ActiveSupport::Notifications.instrument(METRIC_NAME, service: service, action: action, &block)
         end
-
       end
     end
   end

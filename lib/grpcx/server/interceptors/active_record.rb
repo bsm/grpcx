@@ -5,7 +5,6 @@ module Grpcx
       # making sure that connection is established before each request
       # and re-pooling connections when request is processed.
       class ActiveRecord < GRPC::ServerInterceptor
-
         def request_response(*, &block)
           wrap(&block)
         end
@@ -30,7 +29,6 @@ module Grpcx
         ensure
           ::ActiveRecord::Base.clear_active_connections!
         end
-
       end
     end
   end

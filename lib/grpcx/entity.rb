@@ -10,11 +10,11 @@ module Grpcx
 
     module_function
 
-    TRUE_VALUES = [true, 1, "1", "t", "T", "true", "TRUE", "on", "ON"].to_set.freeze
+    TRUE_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'on', 'ON'].to_set.freeze
 
     # @param [Class] msgclass messagepack message class
     # @param [Hash] attrs attributes to assign
-    def build(msgclass, attrs={}) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+    def build(msgclass, attrs = {}) # rubocop:disable Metrics/MethodLength
       attrs  = ActiveSupport::HashWithIndifferentAccess.new(attrs)
       fields = {}
       msgclass.descriptor.each do |field| # rubocop:disable Metrics/BlockLength

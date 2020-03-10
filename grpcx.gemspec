@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'grpcx'
-  s.version       = '0.2.0'
+  s.version       = '0.3.0'
   s.authors       = ['Black Square Media Ltd']
   s.email         = ['info@blacksquaremedia.com']
   s.summary       = %(gRPC extensions/helpers)
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files -z`.split("\x0").reject {|f| f.match(%r{^spec/}) }
   s.test_files    = `git ls-files -z -- spec/*`.split("\x0")
   s.require_paths = ['lib']
-  s.required_ruby_version = '>= 2.2'
+  s.required_ruby_version = '>= 2.5'
 
   s.add_dependency 'activesupport', '>= 5.0'
   s.add_dependency 'grpc', '>= 1.8.0'

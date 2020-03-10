@@ -22,7 +22,7 @@ module Grpcx
       end
     end
 
-    def initialize(opts={})
+    def initialize(opts = {})
       opts[:pool_size] ||= ENV['GRPC_SERVER_THREADS'].to_i if ENV['GRPC_SERVER_THREADS']
       opts[:max_waiting_requests] ||= ENV['GRPC_SERVER_QUEUE'].to_i if ENV['GRPC_SERVER_QUEUE']
 

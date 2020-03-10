@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Grpcx::Server do
-
   subject do
     s = Grpcx::Spec::Server.new
     s.handle Grpcx::Spec::Service::V1
@@ -31,5 +30,4 @@ RSpec.describe Grpcx::Server do
       ArgumentError
     ]
   end
-
 end

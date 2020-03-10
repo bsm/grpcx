@@ -4,30 +4,30 @@ require 'active_record'
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "grpcx.spec.Message" do
+  add_message 'grpcx.spec.Message' do
     optional :name, :string, 1
-    optional :version, :enum, 2, "grpcx.spec.Version"
-    optional :types, :message, 3, "grpcx.spec.Types"
+    optional :version, :enum, 2, 'grpcx.spec.Version'
+    optional :types, :message, 3, 'grpcx.spec.Types'
   end
-  add_message "grpcx.spec.Types" do
+  add_message 'grpcx.spec.Types' do
     optional :num, :int64, 1
     repeated :truth, :bool, 2
     optional :decimal, :double, 3
   end
-  add_enum "grpcx.spec.Version" do
+  add_enum 'grpcx.spec.Version' do
     value :V0, 0
     value :V1, 1
     value :V2, 2
   end
-  add_message "grpcx.spec.GetMessageRequest" do
+  add_message 'grpcx.spec.GetMessageRequest' do
   end
 end
 
 module Grpcx::Spec
-  Message = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Message").msgclass
-  Version = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Version").enummodule
-  Types = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.Types").msgclass
-  GetMessageRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("grpcx.spec.GetMessageRequest").msgclass
+  Message = Google::Protobuf::DescriptorPool.generated_pool.lookup('grpcx.spec.Message').msgclass
+  Version = Google::Protobuf::DescriptorPool.generated_pool.lookup('grpcx.spec.Version').enummodule
+  Types = Google::Protobuf::DescriptorPool.generated_pool.lookup('grpcx.spec.Types').msgclass
+  GetMessageRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup('grpcx.spec.GetMessageRequest').msgclass
 
   module Service
     class V1

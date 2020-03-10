@@ -1,19 +1,18 @@
 require 'spec_helper'
 
 RSpec.describe Grpcx::Entity do
-
   it 'should build messages' do
     msg = described_class.build Grpcx::Spec::Message,
-      name: 'Name',
-      version: 1,
-      types: {
-        num: 8,
-        truth: [1, 0, true, 'true'],
-        decimal: '1.2',
-      }
+                                name: 'Name',
+                                version: 1,
+                                types: {
+                                  num: 8,
+                                  truth: [1, 0, true, 'true'],
+                                  decimal: '1.2',
+                                }
 
     expect(msg.to_h).to eq(
-      name: "Name",
+      name: 'Name',
       version: :V1,
       types: {
         num: 8,
@@ -22,5 +21,4 @@ RSpec.describe Grpcx::Entity do
       },
     )
   end
-
 end
