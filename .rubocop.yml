@@ -3,3 +3,7 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 2.5
+  SuggestExtensions: false
+
+Lint/EmptyBlock:
+  Enabled: false
