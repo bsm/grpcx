@@ -1,7 +1,8 @@
 # grpcx
 
-Ruby gRPC extensions/helpers
+[![Test](https://github.com/bsm/grpcx/actions/workflows/test.yml/badge.svg)](https://github.com/bsm/grpcx/actions/workflows/test.yml)
 
+Ruby gRPC extensions/helpers
 
 # Grpcx::Server
 
@@ -11,7 +12,6 @@ Mixin for `GRPC::RpcServer`:
 - handles `ActiveRecord` connection (auto-connect + pooling)
 - instruments each request with `ActiveSupport::Notifications` (available as `process_action.grpc`, includes `service: 'package.name.ServiceName', action: 'underscored_action_name'` data)
 - includes `ActiveSupport::Rescuable` and transforms most common `ActiveRecord::ActiveRecordError`-s into `GRPC::BadStatus` ones
-
 
 Example:
 
@@ -47,7 +47,6 @@ end
 ...
 ```
 
-
 ## Using with [Datadog::Notifications](https://github.com/bsm/datadog-notifications)
 
 Since version >= [0.5.4](https://github.com/bsm/datadog-notifications/releases/tag/v0.5.4)
@@ -57,7 +56,6 @@ Datadog::Notifications.configure do |c|
   c.use Datadog::Notifications::Plugins::GRPC
 end if RUNNING_IN_PROD?
 ```
-
 
 ## Using with [Sentry](https://sentry.io/)/[Raven](https://github.com/getsentry/raven-ruby)
 

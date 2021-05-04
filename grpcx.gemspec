@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'grpcx'
-  s.version       = '0.3.0'
+  s.version       = '0.3.1'
   s.authors       = ['Black Square Media Ltd']
   s.email         = ['info@blacksquaremedia.com']
   s.summary       = %(gRPC extensions/helpers)
@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rubocop-bsm'
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Grpcx::Entity do
-  it 'should build messages' do
+  it 'builds messages' do
     msg = described_class.build Grpcx::Spec::Message,
                                 name: 'Name',
                                 version: 1,
