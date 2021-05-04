@@ -22,7 +22,7 @@ module Grpcx
       end
     end
 
-    def initialize(opts = {})
+    def initialize(**opts)
       opts[:pool_size] ||= ENV['GRPC_SERVER_THREADS'].to_i if ENV['GRPC_SERVER_THREADS']
       opts[:max_waiting_requests] ||= ENV['GRPC_SERVER_QUEUE'].to_i if ENV['GRPC_SERVER_QUEUE']
 
@@ -32,7 +32,7 @@ module Grpcx
       opts[:interceptors].prepend Grpcx::Server::Interceptors::Instrumentation.new
       opts[:interceptors].prepend Grpcx::Server::Interceptors::ActiveRecord.new if defined?(::ActiveRecord)
 
-      super(opts).tap do
+      super.tap do
         handle(health)
       end
     end
