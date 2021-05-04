@@ -10,3 +10,5 @@ AllCops:
 
 RSpec/FilePath:
   Enabled: false
+Lint/EmptyBlock:
+  Enabled: false
