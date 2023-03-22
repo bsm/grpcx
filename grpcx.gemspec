@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'grpcx'
-  s.version       = '0.3.3'
+  s.version       = '0.3.4'
   s.authors       = ['Black Square Media Ltd']
   s.email         = ['info@blacksquaremedia.com']
   s.summary       = %(gRPC extensions/helpers)
@@ -14,8 +14,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 5.0'
   s.add_dependency 'grpc', '>= 1.8.0'
-
-  s.add_development_dependency 'bundler'
 
   s.metadata['rubygems_mfa_required'] = 'true'
 end
