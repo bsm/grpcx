@@ -8,7 +8,9 @@ inherit_mode:
 AllCops:
   TargetRubyVersion: "2.7"
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
+  Enabled: false
+RSpec/SpecFilePathSuffix:
   Enabled: false
 Lint/EmptyBlock:
   Enabled: false
